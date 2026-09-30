@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IVFTA blog – đề xuất UI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+/* Code chỉ để demo chạy được — spec cho dev nằm ở phần "Spec" bên dưới trang */
+:root{--brand:#102EA6;--brand2:#1268B3;--navy:#083295;--cyan:#6DCFF6;--ink:#333;--ink2:#2E3A59;--muted:#6B7280;--line:#E3E8F0;--bg:#EEF1F6}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--ink)}
+/* ---------- toolbar ---------- */
+.bar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.bar b{font-size:14px;margin-right:auto}
+.seg{display:inline-flex;border:1px solid #CBD5E1;border-radius:8px;overflow:hidden}
+.seg button{font:500 13px Inter,sans-serif;border:0;background:#fff;color:#334155;padding:7px 12px;cursor:pointer}
+.seg button+button{border-left:1px solid #CBD5E1}
+.seg button.on{background:var(--brand);color:#fff}
+.hint{font-size:12px;color:var(--muted);width:100%;margin:0}
+/* ---------- stage / frame ---------- */
+.stage{padding:24px 16px 40px;display:flex;justify-content:center}
+.frame{background:#fff;width:100%;max-width:1240px;position:relative;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.scroller{position:relative}
+.frame.m{width:395px;height:780px;border:10px solid #111;border-radius:34px;overflow:hidden}
+.frame.m .scroller{height:100%;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.frame.m .scroller::-webkit-scrollbar{display:none}
+.ov{display:none}
+.frame.m .fixright{display:block}
+.frame.m .fab-wrap{display:flex}
+.frame.m .totop{display:grid}
+.frame.m a.mk.ov{display:inline-grid}
+.frame:not(.m) a.mk.ov{display:none!important}
+/* ---------- site chrome (rút gọn) ---------- */
+.topbar{background:#EAF2FD;font-size:12px;color:var(--ink2);padding:6px 16px;text-align:right}
+.hdr{display:flex;align-items:center;gap:28px;padding:14px 24px;border-bottom:1px solid var(--line)}
+.logo{height:50px;width:auto;display:block}
+.nav{display:flex;gap:22px;font-size:14px;color:var(--ink)}
+.frame.m .nav,.frame.m .topbar{display:none}
+.frame.m .hdr{justify-content:center;padding:12px}
+.crumb{background:#E7ECF2;padding:10px 24px;text-transform:uppercase;display:flex;align-items:center;flex-wrap:wrap;gap:0 2px}
+.old .crumb{font-size:11.9px;line-height:17px;color:#5D5D5D}
+.old .crumb a{color:#5D5D5D;text-decoration:none}.old .crumb .last{color:#2E3A59}
+.old .frame.m .crumb{font-size:8.4px;line-height:12px;padding:10px 12px}
+.new .crumb{font-size:13px;line-height:20px;gap:0 8px}
+.new .crumb a{color:var(--brand2);text-decoration:none;font-weight:500;padding:6px 0}
+.new .crumb a:hover{text-decoration:underline;text-underline-offset:3px}
+.new .crumb .sep{color:#9AA5B8;font-size:14px}
+.new .crumb .last{color:var(--ink);font-weight:600;min-width:0}
+.new .frame.m .crumb{font-size:12px;padding:4px 12px;flex-wrap:nowrap}
+.new .frame.m .crumb a{padding:10px 0;white-space:nowrap}
+.new .frame.m .crumb .last{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ---------- article tokens ---------- */
+.art{--fs:17px;--lh:28px;--pg:20px;--h1:32px;--h1lh:42px;--h2:26px;--h2lh:34px;--h2t:40px;--h3:20px;--h3lh:28px;--h3t:28px;--col:800px;--by:13px;--side:24px}
+.frame.m .art{--fs:16px;--lh:26px;--pg:18px;--h1:24px;--h1lh:32px;--h2:21px;--h2lh:29px;--h2t:32px;--h3:18px;--h3lh:26px;--h3t:24px;--col:100%;--side:12px}
+.old .art{--fs:14px;--lh:20px;--pg:10px;--h1:36px;--h1lh:44px;--h2:20px;--h2lh:28px;--h2t:20px;--h3:18px;--h3lh:25px;--h3t:20px;--col:1150px;--by:10px}
+.old .frame.m .art{--fs:14px;--lh:20px;--pg:10px;--h1:20px;--h1lh:28px;--h2:20px;--h2lh:28px;--h2t:20px;--h3:18px;--h3lh:25px;--h3t:20px;--col:100%;--by:10px;--side:12px}
+.art{max-width:min(var(--col),100%);margin:0 auto;padding:24px var(--side) 40px;font-size:var(--fs);line-height:var(--lh)}
+.art p,.art ul{margin:0 0 var(--pg)}
+.art p{text-align:justify}
+.art h1{font-size:var(--h1);line-height:var(--h1lh);font-weight:600;text-align:center;margin:8px auto 14px;max-width:900px}
+.art h2{font-size:var(--h2);line-height:var(--h2lh);font-weight:600;color:var(--brand);margin:var(--h2t) 0 12px}
+.art h3{font-size:var(--h3);line-height:var(--h3lh);font-weight:600;margin:var(--h3t) 0 8px}
+.old .art h2{margin-bottom:10px}.old .art h3{margin-bottom:10px}
+.art figure{margin:24px 0}
+.art img{display:block;width:100%;height:auto;border-radius:4px}
+.art figcaption{font-size:14px;line-height:20px;text-align:center;margin-top:6px}
+.art ul li{margin-bottom:6px}
+/* anchors */
+.art a{color:var(--brand);font-weight:600;text-decoration:underline;text-decoration-color:#A9BFEA;text-decoration-thickness:1px;text-underline-offset:3px}
+.art a:hover{color:var(--brand2);text-decoration-color:currentColor;text-decoration-thickness:1.5px}
+.old .art a{color:#337AB7;text-decoration:none;font-weight:700}
+.art a.sb{color:#fff;text-decoration:none}
+.art a.sb:hover{color:#fff}
+/* byline + meta */
+.byl{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px}
+.byl .av{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.byl small{display:block;font-size:var(--by);line-height:1.3;color:#5D5D5D}
+.byl strong{display:block;font-size:calc(var(--by) + 3px);font-weight:500;color:var(--brand2);text-transform:uppercase;line-height:1.35}
+.meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;font-size:12px}
+.meta .grow{flex:1}
+.art img.ggl{width:230px;height:auto;display:block;border-radius:0}
+.pill{background:var(--navy);color:#fff;border-radius:15px;padding:6px 12px;font-size:12px;font-weight:600}
+.frame.m .meta{gap:10px}
+.frame.m .meta .grow{display:none}
+/* TOC (giữ nguyên) */
+.toc{background:rgba(243,243,243,.95);border:1px solid #ddd;padding:10px 16px;font-size:22px;line-height:33px;margin:20px 0;display:flex;justify-content:space-between}
+/* ---------- share ---------- */
+.share{display:inline-flex;gap:8px;align-items:center}
+.share .lbl{font-size:13px;color:var(--muted);margin-right:2px}
+.sb{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;border:0;cursor:pointer;color:#fff;font:700 10px Inter;text-decoration:none!important;padding:0}
+.sb i{font-size:17px;color:#fff}
+.sb.cp i{color:#475569}
+.sb.zl img{width:22px;height:22px;display:block;border-radius:5px}
+.sb.fb{background:#1877F2}.sb.zl{background:#fff;box-shadow:inset 0 0 0 1px #D6E4F7}.sb.cp{background:#EEF2F7}
+.share-end{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:14px 0;margin:28px 0 16px}
+.share-end .sb{width:auto;height:38px;border-radius:19px;padding:0 14px 0 10px;gap:6px;display:inline-flex;font:600 13px Inter}
+.share-end .sb.cp{color:#334155}
+.share-end .sb.zl{color:#0068FF}
+.frame.m .share-end .sb span{display:none}
+.frame.m .share-end .sb{width:40px;height:40px;padding:0;justify-content:center;border-radius:50%}
+
+/* ---------- callout: OLD vs NEW ---------- */
+.co{margin:0 0 var(--pg)}
+.old .co{background:#D9EDF7;border:1px solid #BCE8F1;color:#31708F;border-radius:4px;padding:15px;font-size:14px;line-height:20px}
+.old .co .co-h{display:none}
+.new .co{background:linear-gradient(135deg,#F3F8FF 0%,#E6F0FD 100%);border:1px solid #C7DBF5;border-radius:12px;padding:16px 24px 16px 20px;color:var(--ink2);display:flex;gap:14px}
+.new .frame.m .co{display:block;padding:14px 16px}
+.new .frame.m .co-h{float:left;width:26px;height:26px;margin:0 8px 0 0}
+.new .frame.m .co-h i{font-size:13px}
+
+.co-h{flex:none;width:34px;height:34px;border-radius:50%;background:var(--brand);display:grid;place-items:center;margin-top:2px}
+.co-h i{color:#fff;font-size:16px}
+.co-t{flex:1}
+.co-k{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--brand);text-transform:uppercase;margin-bottom:2px}
+.old .co-k{display:none}
+.new .co a{text-decoration-color:var(--brand);text-decoration-thickness:1.5px;text-underline-offset:4px}
+/* ---------- mid-article CTA ---------- */
+.cta{border:1px solid #D6E4F7;border-left:4px solid var(--brand);border-radius:12px;padding:20px 24px;margin:24px 0;background:#fff;box-shadow:0 2px 10px rgba(16,46,166,.06)}
+.cta h4{margin:0 0 6px;font-size:18px;line-height:26px;color:var(--ink)}
+.cta p{margin:0 0 14px!important;font-size:calc(var(--fs) - 1px);color:#4B5563;text-align:left!important}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:22px;font:600 15px Inter;text-decoration:none!important;cursor:pointer;border:0}
+.btn i{font-size:17px}
+.btn.pri{background:var(--brand);color:#fff!important}
+.btn.pri:hover{background:var(--navy)}
+.btn.sec{background:#fff;color:var(--brand)!important;border:1.5px solid var(--brand)}
+
+.frame.m .btn{width:100%}
+.frame.m .cta{padding:16px}
+.cta-edit,.cta-fixed{position:relative}
+.cta-tag{display:none}
+.new:not(.nomk) .cta-edit{outline:1.5px dashed #F59E0B;outline-offset:6px;margin-bottom:22px}
+.new:not(.nomk) .cta-fixed{outline:1.5px dashed #10B981;outline-offset:6px}
+.new:not(.nomk) .cta-tag{display:block;position:absolute;top:-24px;right:-6px;background:#F59E0B;color:#fff;font:600 11px/16px Inter;padding:1px 8px;border-radius:4px;white-space:nowrap}
+.new:not(.nomk) .cta-tag.fx{background:#10B981;top:auto;bottom:-26px}
+.new:not(.nomk) .cta{padding-bottom:34px}
+/* ---------- contact block: OLD ---------- */
+.hs-old{background:#D9EDF7;border:1px solid #BCE8F1;color:#31708F;border-radius:4px;padding:15px;font-size:14px;line-height:20px;margin-bottom:20px}
+.hs-old a{color:#31708F!important}
+.hs-old ul{margin:0;padding-left:20px}.hs-old ul ul{padding-left:18px;list-style:circle}
+/* ---------- contact block: NEW ---------- */
+.hs{border:1px solid #D6E4F7;border-radius:14px;overflow:hidden;margin:28px 0 8px}
+.hs-top{background:linear-gradient(120deg,var(--brand) 0%,var(--brand2) 100%);color:#fff;padding:18px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hs-top .t{flex:1;min-width:220px}
+.hs-top b{display:block;font-size:19px;line-height:26px}
+.hs-top small{font-size:13px;opacity:.9}
+.hs-top .btn.pri{background:#fff;color:var(--brand)!important}
+
+.hs-tabs{display:none}
+.hs-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.hs-col{padding:16px 24px 18px}
+.hs-col+.hs-col{border-left:1px solid var(--line)}
+.hs-col h5{margin:0 0 8px;font-size:15px;color:var(--brand);display:flex;align-items:center;gap:6px}
+.tels{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tel{display:inline-flex;align-items:center;gap:5px;background:#EAF2FD;color:var(--brand)!important;border-radius:16px;padding:5px 11px;font:600 13.5px Inter;text-decoration:none!important}
+.tel i{font-size:14px}
+.site{padding:9px 0;border-top:1px dashed var(--line);font-size:14px;line-height:21px}
+.site b{display:block;font-weight:600;color:var(--ink)}
+.site span{color:#4B5563}
+.site em{display:block;font-style:normal;font-size:12.5px;color:#8A94A6}
+.hs-foot{border-top:1px solid var(--line);padding:10px 24px;font-size:13px;color:var(--muted);background:#FAFBFD}
+.hs-foot a{font-weight:500}
+.frame.m .hs-top{padding:16px}
+.frame.m .hs-top .btn{width:100%}
+.frame.m .hs-tabs{display:flex;border-bottom:1px solid var(--line)}
+.frame.m .hs-tabs button{flex:1;border:0;background:#fff;font:600 14px Inter;color:#64748B;padding:12px 0;border-bottom:2px solid transparent;cursor:pointer}
+.frame.m .hs-tabs button.on{color:var(--brand);border-color:var(--brand)}
+.frame.m .hs-body{display:block}
+.frame.m .hs-col{display:none;padding:14px 16px}
+.frame.m .hs-col.on{display:block;border-left:0}
+.frame.m .hs-foot{padding:10px 16px}
+.upd{background:#F4F4F4;padding:10px 15px;font-size:14px;margin-top:15px}
+.gg-end{margin:15px 0}
+.art .gg-end a{text-decoration:none}
+/* old/new switches */
+.new .only-old,.old .only-new{display:none!important}
+/* ---------- overlays (mobile) ---------- */
+.fixright{position:absolute;right:10px;top:318px;width:75px;z-index:5}
+.fixright div{background:#fff;border-radius:10px;box-shadow:0 1px 6px rgba(0,0,0,.18);text-align:center;font-size:11px;line-height:13px;padding:8px 2px;margin-bottom:10px}
+.fixright img{display:block;margin:0 auto 4px}
+.fab-wrap{position:absolute;right:16px;bottom:18px;z-index:6;flex-direction:column;align-items:flex-end;gap:10px}
+.fab{width:56px;height:56px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 6px 16px rgba(16,46,166,.35);display:grid;place-items:center;cursor:pointer;position:relative}
+.fab i{font-size:24px;color:#fff}
+.fab .x{display:none}
+.fab-wrap.open .fab .x{display:block}.fab-wrap.open .fab .h{display:none}
+.fab::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(16,46,166,.35);animation:pulse 2.4s infinite}
+.fab-wrap.open .fab::after{display:none}
+@keyframes pulse{0%{transform:scale(.9);opacity:1}70%{transform:scale(1.25);opacity:0}100%{opacity:0}}
+.fab-menu{display:none;flex-direction:column;align-items:flex-end;gap:10px}
+.fab-wrap.open .fab-menu{display:flex}
+.fab-item{display:flex;align-items:center;gap:10px;background:#fff;border-radius:24px;padding:6px 6px 6px 14px;box-shadow:0 3px 12px rgba(0,0,0,.16);font:600 14px Inter;color:var(--ink);text-decoration:none;animation:up .18s ease-out both}
+.fab-item:nth-child(2){animation-delay:.03s}.fab-item:nth-child(3){animation-delay:.06s}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.fab-item i{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#EAF2FD}
+.dim{position:absolute;inset:0;background:rgba(15,23,42,.35);z-index:5;display:none}
+.frame.m .dim{display:none}
+.frame.m .dim.on{display:block}
+.totop{position:absolute;right:26px;bottom:88px;width:36px;height:36px;border-radius:50%;background:rgba(51,51,51,.75);color:#fff;place-items:center;font-size:18px;z-index:4}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111827;color:#fff;font-size:13px;padding:8px 14px;border-radius:8px;z-index:9;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+.frame.m .toast{position:absolute}
+/* ---------- markers ---------- */
+.mk{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#F59E0B;color:#fff;font:700 12px Inter;vertical-align:middle;margin:0 6px;text-decoration:none!important;box-shadow:0 0 0 3px rgba(245,158,11,.25)}
+.old .mk,.nomk .mk{display:none!important}
+.mk.fl{position:absolute;right:-8px;top:-10px;margin:0}
+.rel{position:relative}
+/* ---------- spec ---------- */
+.spec{max-width:1040px;margin:0 auto 60px;padding:0 16px}
+.spec h2{font-size:22px;margin:36px 0 6px;color:var(--brand)}
+.spec h3{font-size:17px;margin:26px 0 8px;display:flex;align-items:center;gap:8px}
+.spec h3 .mk{margin:0;display:inline-grid!important}
+.spec p,.spec li{font-size:14.5px;line-height:23px;color:#374151}
+.spec .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.tw{overflow-x:auto}
+.spec table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff;min-width:640px}
+.spec th,.spec td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top;line-height:20px}
+.spec th{background:#F1F5FB;font-weight:600}
+.spec td.hl{background:#EEF6EE;font-weight:600}
+.spec td.bad{color:#B42318}
+.keep{display:flex;flex-wrap:wrap;gap:8px}
+.keep span{background:#F1F5F9;border-radius:14px;padding:5px 12px;font-size:13px}
+/* ---------- real phone ---------- */
+body.phone .bar .dv{display:none}
+body.phone .bar{position:static}
+body.phone .stage{padding:0}
+body.phone .frame.m{width:100%;height:auto;border:0;border-radius:0;overflow:visible}
+body.phone .frame.m .scroller{height:auto;overflow:visible}
+body.phone .frame.m .ov,body.phone .frame.m .toast{position:fixed}
+</style>
+</head>
+<body class="new">
+
+<div class="bar">
+  <b>IVFTA blog · đề xuất UI (bài mẫu: đa nang buồng trứng có thai được không)</b>
+  <div class="seg" id="segState"><button data-v="old">Hiện trạng</button><button data-v="new" class="on">Đề xuất</button></div>
+  <div class="seg dv" id="segDev"><button data-v="d" class="on">Desktop</button><button data-v="m">Mobile 375</button></div>
+  <div class="seg" id="segMk"><button data-v="1" class="on">Hiện số chú thích</button><button data-v="0">Ẩn</button></div>
+  <p class="hint">Chấm cam ①–⑦ ứng với mục cùng số trong phần Spec cuối trang. Icon dùng bộ Font Awesome 4 mà theme ivfta đang dùng; logo, avatar, nút Google và icon nút nổi lấy trực tiếp từ ivfta.com; logo Zalo lấy từ máy chủ của Zalo. Mục lục, căn đều 2 bên, 2 dòng tác giả/tư vấn và vị trí “Cập nhật lần cuối” giữ nguyên theo phản hồi.</p>
+</div>
+
+<div class="stage">
+<div class="frame" id="frame">
+ <div class="scroller" id="scroller">
+  <div class="topbar"><i class="fa fa-envelope"></i> HN: cskh@tamanhhospital.vn &nbsp;&nbsp; <i class="fa fa-envelope"></i> HCM: cskh@tahospital.vn &nbsp;&nbsp; <i class="fa fa-phone"></i> 0287 102 6789 - 093 180 6858</div>
+  <div class="hdr"><img class="logo" src="https://ivfta.com/wp-content/uploads/2022/10/trung-tam-ho-tro-sinh-san-ivf-tam-anh-logo.png" alt="IVF Tâm Anh" width="160" height="50"><div class="nav"><span>Trang chủ</span><span>Chuyên gia</span><span>Chuyên khoa</span><span>Dịch vụ</span><span>Thành tựu</span><span>Dành cho khách hàng</span><span>Tin tức</span></div></div>
+  <nav class="crumb rel"><a href="https://ivfta.com">Trang chủ</a><span class="sep only-old"> &gt; </span><i class="fa fa-angle-right sep only-new"></i><a href="https://ivfta.com/tin-tuc/benh/">Bệnh học</a><span class="sep only-old"> &gt; </span><i class="fa fa-angle-right sep only-new"></i><span class="last">Đa nang buồng trứng có thai được không?</span><a class="mk" href="#s7">7</a></nav>
+
+  <article class="art">
+   <h1>Đa nang buồng trứng có thai được không? Tỷ lệ có con bao nhiêu %?<a class="mk" href="#s1">1</a></h1>
+   <div class="byl"><img class="av" src="https://ivfta.com/wp-content/uploads/2023/10/bsi-huynh-kha-avt.png" alt="ThS.BS Huỳnh Kha" width="36" height="36"><div><small>Tư vấn chuyên môn</small><strong>ThS.BS Huỳnh Kha</strong></div></div>
+   <div class="meta">
+     <span><i class="fa fa-calendar"></i> 14:43 25/08/2026</span>
+     <img class="ggl" src="https://ivfta.com/img/ivfta-on-google.svg" alt="Thêm IVF Tâm Anh trên Google" width="230" height="33">
+     <span class="grow"></span>
+     <span class="pill">Tác giả: IVF Tâm Anh</span>
+   </div>
+
+   <p>Phụ nữ mắc <strong>đa nang buồng trứng có thai được không</strong> là thắc mắc phổ biến của nhiều chị em. Trên thực tế, đa nang buồng trứng có thể ảnh hưởng đến quá trình rụng trứng và làm giảm khả năng thụ thai tự nhiên, tuy nhiên điều đó không đồng nghĩa với việc người bệnh không thể mang thai.</p>
+   <figure><img src="https://ivfta.com/wp-content/uploads/2026/08/da-nang-buong-trung-co-thai-duoc-khong.jpg" alt="đa nang buồng trứng có thai được không" width="1200" height="628"></figure>
+   <div class="toc"><span><i class="fa fa-list-ol" style="font-size:18px;margin-right:8px"></i>Nội dung</span><i class="fa fa-angle-right"></i></div>
+
+   <h2>Phụ nữ mắc hội chứng đa nang buồng trứng có thai được không?</h2>
+   <p><strong>Có. Phụ nữ mắc hội chứng buồng trứng đa nang (PCOS) hoàn toàn có thể mang thai và sinh con khỏe mạnh.</strong> <a href="https://ivfta.com/buong-trung-da-nang/">PCOS</a><a class="mk" href="#s2">2</a> được biết đến là một trong những nguyên nhân phổ biến gây rối loạn phóng noãn ở phụ nữ trong độ tuổi sinh sản. Sự mất cân bằng nội tiết, đặc biệt là tình trạng tăng androgen và rối loạn hoạt động của trục nội tiết có thể gây gián đoạn quá trình trưởng thành và rụng trứng, từ đó làm giảm khả năng thụ thai tự nhiên. Ngoài ra, buồng trứng của người mắc PCOS thường chứa nhiều nang nhỏ có các noãn chưa trưởng thành, khiến quá trình giải phóng trứng diễn ra không đều hoặc không xảy ra.(<a href="https://www.emc.id/en/care-plus/can-pcos-sufferers-get-pregnant-heres-how-to-increase-your-chances">1</a>)</p>
+   <p>Tuy nhiên, phụ nữ mắc đa nang buồng trứng vẫn có thể mang thai nếu được phát hiện sớm và điều trị đúng hướng. Vì vậy, chị em mắc PCOS không nên quá lo lắng mà cần chủ động <a href="https://ivfta.com/kham-vo-sinh-nu/">khám vô sinh nữ</a> sớm để được tư vấn phác đồ phù hợp, từ đó nâng cao cơ hội mang thai và sinh con khỏe mạnh.</p>
+   <figure><img src="https://ivfta.com/wp-content/uploads/2026/08/bi-da-nang-buong-trung-thuong-kho-mang-thai-tu-nhien.jpg" alt="bị đa nang buồng trứng thường khó mang thai tự nhiên" width="1200" height="800"><figcaption>Phụ nữ mắc đa nang buồng trứng thường khó mang thai tự nhiên hơn bình thường</figcaption></figure>
+
+   <h2>Tại sao đa nang buồng trứng gây khó khăn cho việc thụ thai?</h2>
+   <p>Hội chứng buồng trứng đa nang ảnh hưởng trực tiếp đến khả năng sinh sản thông qua nhiều cơ chế khác nhau, bao gồm:</p>
+   <h3>1. Rối loạn phóng noãn</h3>
+   <p>Ở phụ nữ mắc PCOS, quá trình phát triển và trưởng thành của nang noãn thường bị gián đoạn. Buồng trứng có thể chứa nhiều nang nhỏ nhưng không có nang trội đủ điều kiện để rụng. Điều này khiến hiện tượng rụng trứng xảy ra thưa, không đều hoặc không xảy ra, làm giảm cơ hội gặp gỡ giữa tinh trùng và trứng.</p>
+   <h3>2. Mất cân bằng nội tiết tố</h3>
+   <p>PCOS đặc trưng bởi sự gia tăng hormone androgen cùng sự rối loạn hoạt động của trục hạ đồi – tuyến yên – buồng trứng. Tình trạng này ảnh hưởng đến chu kỳ kinh nguyệt và làm gián đoạn quá trình trưởng thành của noãn. Ngoài ra, sự thay đổi nồng độ estrogen và progesterone cũng khiến môi trường nội tiết không ổn định, gây khó khăn cho việc thụ thai.</p>
+   <h3>3. Ảnh hưởng của kháng insulin và thừa cân</h3>
+   <p>Kháng insulin là rối loạn chuyển hóa thường gặp ở phụ nữ mắc PCOS. Khi nồng độ insulin trong máu tăng cao, buồng trứng có xu hướng sản xuất nhiều androgen hơn, từ đó làm rối loạn quá trình rụng trứng. Bên cạnh đó, thừa cân hoặc béo phì có thể làm thay đổi chuyển hóa hormone sinh dục, khiến chu kỳ phóng noãn bị ảnh hưởng và giảm khả năng mang thai.</p>
+   <h3>4. Ảnh hưởng đến chất lượng nội mạc tử cung</h3>
+   <p>Sự rối loạn nội tiết kéo dài tác động đến quá trình phát triển của nội mạc tử cung, khiến lớp niêm mạc không đạt độ dày và chất lượng tối ưu cho phôi làm tổ. Điều này làm giảm khả năng thụ thai tự nhiên và có thể tăng nguy cơ thất bại trong giai đoạn sớm của thai kỳ.</p>
+
+   <h2>Cách tăng khả năng có con khi bị đa nang buồng trứng</h2>
+   <p>Hội chứng buồng trứng đa nang có thể làm giảm khả năng thụ thai do rối loạn phóng noãn và các bất thường nội tiết – chuyển hóa. Tuy nhiên, với chiến lược điều trị phù hợp, nhiều phụ nữ vẫn có thể mang thai thành công. Dưới đây là các phương pháp thường được áp dụng để cải thiện khả năng sinh sản ở người mắc PCOS:</p>
+   <h3>1. Thay đổi lối sống<a class="mk" href="#s1">1</a></h3>
+   <p>Điều chỉnh lối sống là bước nền tảng trong điều trị PCOS, đặc biệt với những trường hợp thừa cân, béo phì. Giảm khoảng 5 – 10% trọng lượng cơ thể có thể giúp cải thiện độ nhạy insulin, điều hòa chu kỳ kinh nguyệt và tăng tần suất rụng trứng.</p>
+   <p>Người bệnh nên duy trì chế độ ăn cân bằng, ưu tiên thực phẩm giàu chất xơ, protein nạc và chất béo lành mạnh; hạn chế đường tinh luyện, thực phẩm chế biến sẵn và chất béo bão hòa. Kết hợp vận động thể lực đều đặn như đi bộ nhanh, đạp xe, bơi lội hoặc yoga để cải thiện chuyển hóa và nội tiết hiệu quả.</p>
+   <div class="co rel"><a class="mk fl" href="#s2">2</a>
+     <div class="co-h only-new"><i class="fa fa-book"></i></div>
+     <div class="co-t">Đối với phụ nữ thừa cân, béo phì mắc PCOS thường giảm cân chậm hơn do tình trạng kháng insulin khiến cơ thể dễ tích mỡ và khó huy động mỡ dự trữ. Cùng tìm hiểu thêm 12 <a href="https://ivfta.com/cach-giam-can-cho-nguoi-bi-da-nang-buong-trung/">cách giảm cân cho người bị đa nang buồng trứng</a> (PCOS) hiệu quả.</div>
+   </div>
+   <figure><img src="https://ivfta.com/wp-content/uploads/2026/08/loi-song-lanh-manh-cai-thien-da-nang-buong-trung.jpg" alt="lối sống lành mạnh cải thiện đa nang buồng trứng" width="1200" height="800"><figcaption>Xây dựng lối sống lành mạnh là một trong những biện pháp hiệu quả giúp cải thiện tình trạng đa nang buồng trứng</figcaption></figure>
+   <h3>2. Kích thích rụng trứng giao hợp tự nhiên</h3>
+   <p>Trong trường hợp rối loạn phóng noãn kéo dài, bác sĩ có thể chỉ định thuốc kích thích rụng trứng nhằm hỗ trợ quá trình phát triển nang noãn và tăng khả năng thụ thai tự nhiên. Việc sử dụng thuốc cần được theo dõi chặt chẽ bởi bác sĩ chuyên khoa để kiểm soát nguy cơ <a href="https://ivfta.com/qua-kich-buong-trung/">quá kích buồng trứng</a> hoặc đa thai.</p>
+   <h3>3. Kiểm soát insulin</h3>
+   <p>Kháng insulin là rối loạn phổ biến ở phụ nữ mắc PCOS liên quan trực tiếp đến tình trạng tăng androgen và rối loạn rụng trứng. Kiểm soát đường huyết thông qua chế độ ăn hợp lý, giảm cân và sử dụng thuốc trong một số trường hợp có thể giúp cải thiện độ nhạy insulin, đồng thời ổn định nội tiết và tăng cơ hội mang thai.</p>
+   <h3>4. Can thiệp ngoại khoa</h3>
+   <p>Khi điều trị nội khoa không đạt hiệu quả, can thiệp ngoại khoa có thể được cân nhắc. Phương pháp thường áp dụng là đốt điểm buồng trứng bằng nội soi, nhằm giảm sản xuất androgen và kích thích quá trình rụng trứng. Đây là lựa chọn điều trị có tính chọn lọc và cần được đánh giá kỹ lưỡng trước khi thực hiện.</p>
+   <h3>5. Hỗ trợ sinh sản (IUI/IVF)</h3>
+   <p>Nếu những phương pháp trên không mang lại kết quả, các kỹ thuật hỗ trợ sinh sản như IUI hoặc thụ tinh trong ống nghiệm (IVF) có thể giúp tăng đáng kể khả năng mang thai. Tùy vào độ tuổi, tình trạng rụng trứng và các yếu tố sinh sản khác, bác sĩ sẽ tư vấn phương pháp phù hợp để tối ưu hiệu quả điều trị.</p>
+   <div class="co">
+     <div class="co-h only-new"><i class="fa fa-book"></i></div>
+     <div class="co-t">Cùng tìm hiểu thêm <a href="https://ivfta.com/buong-trung-da-nang-co-lam-iui-duoc-khong/">bị đa nang buồng trứng có làm IUI được không</a>? Những điều kiện để phụ nữ mắc PCOS thực hiện IUI mà bạn cần biết. Đối với trường hợp đã qua nhiều chu kỳ IUI mà chưa thành công thì phụ nữ bị <a href="https://ivfta.com/da-nang-buong-trung-co-lam-ivf-duoc-khong/">đa nang buồng trứng có làm IVF được không</a>?</div>
+   </div>
+   <div class="cta only-new rel"><a class="mk fl" href="#s3">3</a>
+     <div class="cta-edit"><span class="cta-tag">Editor nhập mỗi lần chèn</span>
+     <h4>Khám hiếm muộn cho phụ nữ mắc PCOS</h4>
+     <p>Phác đồ cho người mắc PCOS phụ thuộc vào tình trạng rụng trứng, nội tiết và chuyển hóa của từng người. Nếu chu kỳ kinh không đều hoặc đã mong con một thời gian mà chưa có kết quả, chị em có thể đặt lịch để bác sĩ IVF Tâm Anh đánh giá và tư vấn hướng điều trị phù hợp.</p>
+     </div>
+     <div class="btns cta-fixed"><span class="cta-tag fx">Cố định · lấy từ cài đặt chung</span>
+       <a class="btn pri" href="https://ivfta.com/danh-cho-khach-hang/dat-lich-kham/" target="_blank" rel="noopener"><i class="fa fa-calendar"></i>Đặt lịch khám</a>
+       <a class="btn sec" href="tel:+84931806858"><i class="fa fa-phone"></i>Gọi 093 180 6858</a>
+     </div>
+   </div>
+   <figure><img src="https://ivfta.com/wp-content/uploads/2026/08/thsbs-giang-huynh-nhu-dang-tu-van-cho-benh-nhan.jpg" alt="ths.bs giang huỳnh như đang tư vấn cho bệnh nhân" width="1200" height="800"><figcaption>ThS.BS Giang Huỳnh Như đang tư vấn cho bệnh nhân</figcaption></figure>
+   <p>Việc điều trị PCOS cần được cá thể hóa cho từng người bệnh. Thăm khám sớm và tuân thủ phác đồ của bác sĩ chuyên khoa không chỉ giúp cải thiện khả năng sinh sản mà còn góp phần kiểm soát các rối loạn nội tiết – chuyển hóa lâu dài.</p>
+
+   <h2>Lời khuyên của bác sĩ dành cho phụ nữ mắc PCOS mong có con</h2>
+   <p>Bác sĩ Phạm Thị Mỹ Tú khuyến cáo phụ nữ mắc hội chứng buồng trứng đa nang (PCOS) nên chủ động thăm khám chuyên khoa hỗ trợ sinh sản sớm để đánh giá tình trạng rụng trứng, nội tiết và các yếu tố chuyển hóa liên quan. Việc kiểm soát cân nặng, duy trì chế độ dinh dưỡng lành mạnh, tập luyện đều đặn và ổn định đường huyết đóng vai trò quan trọng trong cải thiện khả năng thụ thai. Bên cạnh đó, người bệnh cần tuân thủ phác đồ điều trị của bác sĩ, không tự ý dùng thuốc kích thích rụng trứng, đồng thời theo dõi chu kỳ kinh và thời điểm rụng trứng để tối ưu cơ hội mang thai an toàn.</p>
+
+   <!-- OLD: câu dẫn + khối địa chỉ đứng trước kết bài -->
+   <div class="only-old">
+     <p>Để đặt lịch thăm khám với các bác sĩ, chuyên gia tại IVF Tâm Anh, quý khách hàng có thể liên hệ:</p>
+     <div class="hs-old">
+       <p style="margin:0 0 6px;text-align:left"><strong>HỆ THỐNG BỆNH VIỆN ĐA KHOA TÂM ANH</strong></p>
+       <ul>
+        <li>Bệnh viện Đa khoa Tâm Anh Hà Nội:<ul><li>108 Phố Hoàng Như Tiếp, Phường Bồ Đề, TP. Hà Nội</li><li>(Đ/c cũ: 108 Hoàng Như Tiếp, P.Bồ Đề, Q.Long Biên, TP. Hà Nội)</li><li>Hotline: <b><a href="tel:+842438723872">024 3872 3872</a> – <a href="tel:+842471066858">024 7106 6858</a></b></li></ul></li>
+        <li>Bệnh viện Đa khoa Tâm Anh TPHCM:<ul><li>2B Phổ Quang, Phường Tân Sơn Hòa, TP.HCM</li><li>(Đ/c cũ: 2B Phổ Quang, P.2, Q.Tân Bình, TP.HCM)</li><li>Hotline: <b><a href="tel:+84931806858">093 180 6858</a> – <a href="tel:+842871026789">0287 102 6789</a></b></li></ul></li>
+        <li>Bệnh viện Đa khoa Tâm Anh – Quận 8:<ul><li>316C Phạm Hùng, Phường Chánh Hưng, TP.HCM</li><li>(Đ/c cũ: 316C Phạm Hùng, P.5, Q.8, TP.HCM)</li><li>Hotline: <b><a href="tel:+84931806858">093 180 6858</a> – <a href="tel:+842871026789">0287 102 6789</a></b></li></ul></li>
+        <li>Phòng khám Đa khoa Tâm Anh Quận 7:<ul><li>25 Nguyễn Hữu Thọ, Phường Tân Hưng, TP.HCM</li><li>(Đ/c cũ: 25 Nguyễn Hữu Thọ, P.Tân Hưng, Q.7, TP.HCM)</li><li>Hotline: <b><a href="tel:+84931806858">093 180 6858</a> – <a href="tel:+842871026789">0287 102 6789</a></b></li></ul></li>
+        <li>Phòng khám Đa khoa Tâm Anh Cầu Giấy:<ul><li>265 Cầu Giấy, Phường Cầu Giấy, TP. Hà Nội</li><li>(Đ/c cũ: 265 Cầu Giấy, P.Dịch Vọng, Q.Cầu Giấy, TP. Hà Nội)</li><li>Hotline: <b><a href="tel:+842438723872">024 3872 3872</a> – <a href="tel:+842471066858">024 7106 6858</a></b></li></ul></li>
+        <li>Fanpage: <b><a href="https://www.facebook.com/ivfta">https://www.facebook.com/ivfta</a></b></li>
+        <li>Website: <b>ivfta.com</b></li>
+       </ul>
+     </div>
+   </div>
+
+   <p>Nhìn chung, <strong>đa nang buồng trứng có thai được không</strong> còn phụ thuộc vào mức độ rối loạn nội tiết, tình trạng chuyển hóa và phương pháp điều trị của từng người. Việc thăm khám sớm, điều chỉnh lối sống và tuân thủ hướng dẫn của bác sĩ sẽ giúp cải thiện khả năng rụng trứng và tăng cơ hội mang thai an toàn. Chính vì vậy, việc chủ động chăm sóc sức khỏe sinh sản chính là “chìa khóa” giúp phụ nữ mắc PCOS tiến gần hơn đến mục tiêu làm mẹ.</p>
+
+   <!-- NEW: thẻ liên hệ sau kết bài -->
+   <div class="hs only-new rel"><a class="mk fl" href="#s4">4</a>
+     <div class="hs-top">
+       <div class="t"><b>Đặt lịch khám tại IVF Tâm Anh</b><small>Hệ thống Bệnh viện Đa khoa Tâm Anh · 5 cơ sở tại Hà Nội và TP.HCM</small></div>
+       <a class="btn pri" href="https://ivfta.com/danh-cho-khach-hang/dat-lich-kham/" target="_blank" rel="noopener"><i class="fa fa-calendar"></i>Đặt lịch khám</a>
+     </div>
+     <div class="hs-tabs"><button class="on" data-t="hn">Hà Nội (2)</button><button data-t="hcm">TP.HCM (3)</button></div>
+     <div class="hs-body">
+       <div class="hs-col on" data-c="hn">
+         <h5><i class="fa fa-map-marker"></i> Hà Nội</h5>
+         <div class="tels"><a class="tel" href="tel:+842438723872"><i class="fa fa-phone"></i>024 3872 3872</a><a class="tel" href="tel:+842471066858"><i class="fa fa-phone"></i>024 7106 6858</a></div>
+         <div class="site"><b>Bệnh viện Đa khoa Tâm Anh Hà Nội</b><span>108 Phố Hoàng Như Tiếp, Phường Bồ Đề, TP. Hà Nội</span><em>Đ/c cũ: 108 Hoàng Như Tiếp, P.Bồ Đề, Q.Long Biên</em></div>
+         <div class="site"><b>Phòng khám Đa khoa Tâm Anh Cầu Giấy</b><span>265 Cầu Giấy, Phường Cầu Giấy, TP. Hà Nội</span><em>Đ/c cũ: 265 Cầu Giấy, P.Dịch Vọng, Q.Cầu Giấy</em></div>
+       </div>
+       <div class="hs-col" data-c="hcm">
+         <h5><i class="fa fa-map-marker"></i> TP. Hồ Chí Minh</h5>
+         <div class="tels"><a class="tel" href="tel:+84931806858"><i class="fa fa-phone"></i>093 180 6858</a><a class="tel" href="tel:+842871026789"><i class="fa fa-phone"></i>0287 102 6789</a></div>
+         <div class="site"><b>Bệnh viện Đa khoa Tâm Anh TP.HCM</b><span>2B Phổ Quang, Phường Tân Sơn Hòa, TP.HCM</span><em>Đ/c cũ: 2B Phổ Quang, P.2, Q.Tân Bình</em></div>
+         <div class="site"><b>Bệnh viện Đa khoa Tâm Anh – Quận 8</b><span>316C Phạm Hùng, Phường Chánh Hưng, TP.HCM</span><em>Đ/c cũ: 316C Phạm Hùng, P.5, Q.8</em></div>
+         <div class="site"><b>Phòng khám Đa khoa Tâm Anh Quận 7</b><span>25 Nguyễn Hữu Thọ, Phường Tân Hưng, TP.HCM</span><em>Đ/c cũ: 25 Nguyễn Hữu Thọ, P.Tân Hưng, Q.7</em></div>
+       </div>
+     </div>
+     <div class="hs-foot">Fanpage: <a href="https://www.facebook.com/ivfta" target="_blank" rel="noopener">facebook.com/ivfta</a> · Website: ivfta.com</div>
+   </div>
+
+   <div class="share-end only-new rel"><a class="mk fl" href="#s6">6</a>
+     <span class="lbl" style="font-size:14px;color:#475569;font-weight:600">Chia sẻ bài viết:</span>
+     <a class="sb fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fivfta.com%2Fda-nang-buong-trung-co-thai-duoc-khong%2F" target="_blank" rel="noopener"><i class="fa fa-facebook"></i><span>Facebook</span></a>
+     <button class="sb zl" data-zalo><img src="https://stc-zaloprofile.zdn.vn/pc/v1/images/zalo_sharelogo.png" alt="Zalo" width="22" height="22"><span>Zalo</span></button>
+     <button class="sb cp" data-copy><i class="fa fa-link"></i><span>Sao chép link</span></button>
+   </div>
+   <div class="upd"><i class="fa fa-clock-o"></i> Cập nhật lần cuối: 14:25 25/08/2026</div>
+   <div class="gg-end"><a href="https://www.google.com/preferences/source?q=ivfta.com" target="_blank" rel="nofollow noreferrer noopener"><img class="ggl" src="https://ivfta.com/img/ivfta-on-google.svg" alt="Thêm IVF Tâm Anh trên Google" width="230" height="33"></a></div>
+  </article>
+ </div>
+
+ <!-- overlays (mobile) -->
+ <div class="ov only-old fixright"><div><img src="https://ivfta.com/wp-content/uploads/2022/09/i-facebook-1.png" width="30" height="30" alt="">Cộng đồng<br>IVFTA - HCM</div><div><img src="https://ivfta.com/wp-content/uploads/2022/09/i-calendar.png" width="30" height="30" alt="">Đăng ký<br>khám bệnh</div><div><img src="https://ivfta.com/wp-content/uploads/2025/01/ic-faq.png" width="34" height="29" alt="">Tư vấn<br>miễn phí</div></div>
+ <div class="ov dim only-new" id="dim"></div>
+ <div class="ov totop only-new"><i class="fa fa-chevron-up"></i></div>
+ <div class="ov fab-wrap only-new" id="fab">
+   <div class="fab-menu">
+     <a class="fab-item" href="https://www.facebook.com/groups/788306538485948" target="_blank" rel="noopener">Cộng đồng IVFTA - HCM<i><img src="https://ivfta.com/wp-content/uploads/2022/09/i-facebook-1.png" width="26" height="26" alt=""></i></a>
+     <a class="fab-item" href="https://ivfta.com/danh-cho-khach-hang/dat-lich-kham/" target="_blank" rel="noopener">Đăng ký khám bệnh<i><img src="https://ivfta.com/wp-content/uploads/2022/09/i-calendar.png" width="26" height="26" alt=""></i></a>
+     <a class="fab-item" href="https://tamanhhospital.vn/chu-de-tu-van/ho-tro-sinh-san-ivfta/" target="_blank" rel="noopener">Tư vấn miễn phí<i><img src="https://ivfta.com/wp-content/uploads/2025/01/ic-faq.png" width="28" height="24" alt=""></i></a>
+   </div>
+   <button class="fab" aria-label="Mở liên hệ nhanh"><i class="fa fa-commenting h"></i><i class="fa fa-times x"></i></button>
+ </div>
+ <div class="toast" id="toast"></div>
+ <a class="mk only-new ov" href="#s5" style="position:absolute;right:76px;bottom:34px;z-index:7">5</a>
+</div>
+</div>
+
+<!-- ================= SPEC ================= -->
+<div class="spec" id="spec">
+ <h2>Spec đề xuất cho dev</h2>
+ <p>Font giữ Inter theo brand. Áp cho template bài viết (post) của ivfta.com nên mọi bài blog nhận thay đổi cùng lúc. Số đo benchmark lấy ngày 29/09/2026 trên 3 trang tham khảo, ở khung 1366px và 375px.</p>
+
+ <h3 id="s1"><span class="mk" style="display:inline-grid">1</span> Chữ, giãn dòng, khoảng cách</h3>
+ <div class="tw"><table>
+  <tr><th>Thuộc tính</th><th>Hiện trạng ivfta</th><th>Hyperinkers / Vibim</th><th>Thẩm mỹ Linh Anh</th><th>Đề xuất desktop</th><th>Đề xuất mobile</th></tr>
+  <tr><td>Chữ thân bài / giãn dòng</td><td class="bad">14 / 20px (1.43)</td><td>16 / 25.6px (1.6)</td><td>17.9 / 28.7px (1.6)</td><td class="hl">17 / 28px</td><td class="hl">16 / 26px</td></tr>
+  <tr><td>Khoảng cách giữa 2 đoạn</td><td class="bad">10px</td><td>21px</td><td>23px</td><td class="hl">20px</td><td class="hl">18px</td></tr>
+  <tr><td>Độ rộng cột chữ</td><td class="bad">1.139px (~170 ký tự/dòng)</td><td>848–914px (~106–114)</td><td>870px (~97)</td><td class="hl">tối đa 800px (~94), căn giữa</td><td class="hl">toàn màn hình, lề 12px</td></tr>
+  <tr><td>H1</td><td>36px · mobile <span class="bad">20px</span></td><td>24–27px · 22.4px</td><td>30.5px · 22.4px</td><td class="hl">32 / 42px</td><td class="hl">24 / 32px</td></tr>
+  <tr><td>H2 (xanh brand #102EA6)</td><td class="bad">20px (mobile = H1)</td><td>25.6px · 22.4px</td><td>28.7px · 20px</td><td class="hl">26 / 34px</td><td class="hl">21 / 29px</td></tr>
+  <tr><td>H3</td><td>18px</td><td>20px · 20.8px</td><td>—</td><td class="hl">20 / 28px</td><td class="hl">18 / 26px</td></tr>
+  <tr><td>Khoảng trống trên H2 / dưới H2</td><td class="bad">20 / 10px</td><td>32 / 13px</td><td>43 / 14px</td><td class="hl">40 / 12px</td><td class="hl">32 / 12px</td></tr>
+  <tr><td>Khoảng trống trên H3 / dưới H3</td><td>20 / 10px</td><td>32 / 10px</td><td>—</td><td class="hl">28 / 8px</td><td class="hl">24 / 8px</td></tr>
+  <tr><td>Byline “Tư vấn chuyên môn”</td><td class="bad">10px</td><td>—</td><td>—</td><td class="hl">nhãn 13px, tên 16px</td><td class="hl">như desktop</td></tr>
+  <tr><td>Căn lề đoạn văn</td><td>Căn đều</td><td>Vibim căn đều, Hyperinkers căn trái</td><td>Căn đều</td><td colspan="2">Giữ căn đều hai bên</td></tr>
+ </table></div>
+ <p>Hệ quả đi kèm: khi cột còn 800px, ảnh trong bài tự thu về 800px (hiện 1.139×759px), nên mỗi ảnh ngắn đi khoảng 230px mà không cần sửa ảnh.</p>
+
+ <h3 id="s2"><span class="mk" style="display:inline-grid">2</span> Hộp gợi ý đọc thêm và anchor text</h3>
+ <div class="tw"><table>
+  <tr><th></th><th>Hiện trạng</th><th>Linh Anh (tham khảo)</th><th>Đề xuất ivfta</th></tr>
+  <tr><td>Nền hộp</td><td>Xanh nhạt #D9EDF7 (màu thông báo mặc định)</td><td>Chuyển màu tím rất nhạt, viền tím 1px, bo 12px</td><td class="hl">Chuyển màu xanh rất nhạt #F3F8FF → #E6F0FD (chéo 135°), viền 1px #C7DBF5, bo góc 12px</td></tr>
+  <tr><td>Nhận diện</td><td>Không có</td><td>Dòng đậm “Đọc thêm bài viết liên quan:”</td><td class="hl">Chỉ icon quyển sách trong vòng tròn xanh brand 34px bên trái (mobile 26px, chữ chạy vòng quanh icon). <b>Không có nhãn chữ</b>, để câu dẫn trong hộp nối mạch với đoạn trên</td></tr>
+  <tr><td>Chữ trong hộp</td><td>14px, #31708F</td><td>18px, tím đậm</td><td class="hl">Cùng cỡ thân bài (17 / 16px), màu #2E3A59</td></tr>
+  <tr><td>Anchor trong hộp</td><td>#337AB7 đậm, không gạch</td><td>Màu brand, gạch chân 1.2px, cách chữ 4px</td><td class="hl">#102EA6, đậm 600, gạch chân liền 1.5px cùng màu, cách chữ 4px</td></tr>
+  <tr><td>Anchor trong đoạn văn</td><td>#337AB7 đậm, không gạch — khó phân biệt với chữ in đậm thường</td><td>Màu brand đậm, 600, không gạch</td><td class="hl">#102EA6, đậm 600, gạch chân mảnh 1px màu #A9BFEA cách 3px</td></tr>
+  <tr><td>Khi rê chuột</td><td>—</td><td>—</td><td class="hl">Chữ đổi #1268B3, gạch chân đậm lên 1.5px cùng màu chữ</td></tr>
+  <tr><td>Khoảng đệm hộp</td><td>15px</td><td>14 / 24px</td><td class="hl">Desktop 16px trên dưới, 20–24px hai bên · mobile 14 / 16px</td></tr>
+ </table></div>
+ <p><b>Cách editor dùng:</b> hiện editor phải tự gõ mã hộp màu vào bài. Đề nghị dev làm thành khối chèn sẵn trong trình soạn thảo (giống cách chèn ảnh): editor chỉ gõ câu dẫn và gắn link, giao diện hộp do template lo. Đổi giao diện sau này chỉ sửa 1 chỗ, mọi bài cũ đổi theo.</p>
+
+ <h3 id="s3"><span class="mk" style="display:inline-grid">3</span> Khối CTA giữa bài (chèn linh hoạt, 2 nút cố định)</h3>
+ <div class="card">
+  <p><b>Dạng:</b> một khối CTA chèn sẵn trong trình soạn thảo bài viết. Editor đặt con trỏ ở vị trí muốn chèn trong bài rồi chèn khối, giống chèn ảnh. Vị trí và số lượng do editor quyết định theo từng bài.</p>
+  <div class="tw"><table>
+   <tr><th>Phần</th><th>Ai quản lý</th><th>Yêu cầu</th></tr>
+   <tr><td><span style="color:#B45309;font-weight:600">Tiêu đề</span></td><td>Editor, mỗi lần chèn</td><td>Không bắt buộc. Để trống thì thẻ không hiện dòng tiêu đề, không để lại khoảng trống</td></tr>
+   <tr><td><span style="color:#B45309;font-weight:600">Nội dung</span></td><td>Editor, mỗi lần chèn</td><td>Bắt buộc. Cho phép in đậm và chèn link như đoạn văn thường. Độ dài khuyến nghị 1–3 câu</td></tr>
+   <tr><td><span style="color:#047857;font-weight:600">Nút “Đặt lịch khám”</span></td><td>Cài đặt chung của site</td><td>Editor không sửa trong bài. Nhãn và link (hiện là trang Đặt lịch khám) đặt 1 lần; đổi ở cài đặt thì mọi CTA trên mọi bài đổi theo</td></tr>
+   <tr><td><span style="color:#047857;font-weight:600">Nút “Gọi hotline”</span></td><td>Cài đặt chung của site</td><td>Như trên. Số hiển thị trên nút và số gọi đi lấy cùng 1 chỗ để không lệch nhau</td></tr>
+  </table></div>
+  <p><b>Giao diện (giống nhau ở mọi bài):</b> thẻ nền trắng, viền 1px #D6E4F7, vạch trái 4px xanh brand, bo 12px, đổ bóng rất nhẹ. Tiêu đề 18px đậm; nội dung nhỏ hơn thân bài 1px, căn trái. Nút chính nền #102EA6 chữ trắng (rê chuột: #083295); nút phụ viền xanh. Nút cao 44px, bo tròn. Mobile: 2 nút xếp dọc, rộng hết thẻ.</p>
+  <p><b>Đo lường:</b> mỗi lần bấm nút ghi lại 1 sự kiện kèm URL bài, tên nút và thứ tự khối trong bài (CTA thứ 1, thứ 2…). Vì vị trí đổi theo từng bài, số liệu này cho biết vị trí nào ra lượt đặt lịch/gọi nhiều hơn.</p>
+  <p><b>Khác hộp đọc thêm:</b> hộp đọc thêm là nền xanh nhạt + icon sách (dẫn sang bài khác); CTA là nền trắng + vạch trái + nút đặc (hành động).</p>
+  <p><b>Quy ước cho editor:</b> tối đa 2 khối mỗi bài, không tính thẻ liên hệ cuối bài; câu dẫn viết theo mẫu đã duyệt (sự thật trước, rồi tình huống người đọc, rồi lợi ích).</p>
+ </div>
+
+ <h3 id="s4"><span class="mk" style="display:inline-grid">4</span> Khối “Hệ thống bệnh viện” → thẻ liên hệ</h3>
+ <div class="card">
+  <p><b>Vị trí:</b> dời xuống <b>sau đoạn kết “Nhìn chung…”</b>. Hiện khối 722px (mobile 1.042px) đang chen giữa phần Lời khuyên và kết bài. Bỏ câu dẫn “Để đặt lịch thăm khám…”, vì tiêu đề thẻ đã nói việc này.</p>
+  <p><b>Cấu trúc:</b></p>
+  <ul>
+   <li>Dải đầu nền chuyển màu #102EA6 → #1268B3: tiêu đề “Đặt lịch khám tại IVF Tâm Anh” 19px trắng + dòng phụ “5 cơ sở tại Hà Nội và TP.HCM”, nút trắng “Đặt lịch khám” bên phải (mobile: nút xuống dưới, rộng hết).</li>
+   <li>Thân thẻ chia theo thành phố. <b>Hotline ghi 1 lần mỗi thành phố</b> dạng nút bo tròn bấm-để-gọi (hiện 10 số lặp lại → còn 4 số). Mỗi cơ sở: tên 14px đậm, địa chỉ mới, địa chỉ cũ 12.5px xám một dòng.</li>
+   <li>Desktop: 2 cột Hà Nội | TP.HCM cạnh nhau. Mobile: 2 tab “Hà Nội (2)” / “TP.HCM (3)”, mặc định mở Hà Nội; mọi địa chỉ vẫn nằm trong nội dung trang, tab chỉ ẩn phần hiển thị.</li>
+   <li>Dòng cuối: Fanpage + website, 13px xám.</li>
+  </ul>
+  <p><b>Chiều cao đo trên mockup:</b> desktop khoảng 500px (hiện 722px), mobile xem ở chế độ Mobile 375.</p>
+ </div>
+
+ <h3 id="s5"><span class="mk" style="display:inline-grid">5</span> Nút nổi mobile: gom 3 nút thành 1 nút tròn</h3>
+ <div class="card">
+  <p><b>Giao diện:</b> nút tròn 56px, góc dưới phải cách mép 16px, nền chuyển màu xanh brand, icon tin nhắn trắng, vòng sáng lan nhẹ 2.4 giây/lần để gợi bấm. Nút lên đầu trang dời lên trên nút tròn để không chồng nhau. Desktop giữ cột 3 nút hiện tại.</p>
+  <div class="tw"><table>
+   <tr><th>Thao tác</th><th>Kết quả</th></tr>
+   <tr><td>Tải trang</td><td>Chỉ hiện nút tròn; không có gì che chữ bài viết</td></tr>
+   <tr><td>Chạm nút tròn</td><td>3 lựa chọn trượt lên phía trên nút, dạng nhãn trắng bo tròn + đúng 3 icon site đang dùng: “Cộng đồng IVFTA - HCM”, “Đăng ký khám bệnh”, “Tư vấn miễn phí”; icon nút đổi thành dấu X; nền trang phủ tối 35%</td></tr>
+   <tr><td>Chạm 1 lựa chọn</td><td>Mở đúng đường dẫn hiện tại của lựa chọn đó; menu tự đóng</td></tr>
+   <tr><td>Chạm X hoặc chạm vùng tối</td><td>Menu đóng, trở về nút tròn</td></tr>
+   <tr><td>Cuộn trang khi menu đang mở</td><td>Menu đóng</td></tr>
+  </table></div>
+ </div>
+
+ <h3 id="s6"><span class="mk" style="display:inline-grid">6</span> Chia sẻ Facebook / Zalo</h3>
+ <div class="card">
+  <p><b>Vị trí:</b> chỉ ở cuối bài, sau thẻ liên hệ và trước “Cập nhật lần cuối”. Nút “Thêm IVF Tâm Anh trên Google” sau “Cập nhật lần cuối” giữ nguyên vị trí và hình thức (team đang test). Dòng “Chia sẻ bài viết:” + 3 nút 38px có chữ: Facebook (nền #1877F2, icon trắng), Zalo (nền trắng viền nhạt, logo Zalo chính thức), Sao chép link (nền xám nhạt). Mobile: 3 nút tròn 40px, chỉ icon.</p>
+  <div class="tw"><table>
+   <tr><th>Nút</th><th>Kết quả khi bấm</th></tr>
+   <tr><td>Facebook</td><td>Mở hộp chia sẻ Facebook với link bài hiện tại (cửa sổ mới trên desktop, app Facebook trên điện thoại)</td></tr>
+   <tr><td>Zalo</td><td>Mở chia sẻ Zalo với link bài. Nút chia sẻ chính thức của Zalo cần mã Zalo Official Account của IVF Tâm Anh, dev cần xin mã này từ team quản lý OA</td></tr>
+   <tr><td>Sao chép link</td><td>Sao chép link bài, hiện thông báo nhỏ “Đã sao chép liên kết” 2 giây</td></tr>
+  </table></div>
+  <p>Ảnh và tiêu đề hiện ra khi chia sẻ lấy từ ảnh đại diện + title bài; cần kiểm lại trên công cụ gỡ lỗi chia sẻ của Facebook sau khi làm.</p>
+ </div>
+
+ <h3 id="s7"><span class="mk" style="display:inline-grid">7</span> Breadcrumb</h3>
+ <div class="tw"><table>
+  <tr><th></th><th>Hiện trạng</th><th>Đề xuất</th></tr>
+  <tr><td>Cỡ chữ</td><td class="bad">11.9px desktop · 8.4px mobile</td><td class="hl">13px desktop · 12px mobile</td></tr>
+  <tr><td>Mục bấm được (Trang chủ, chuyên mục)</td><td class="bad">Xám #5D5D5D, trông như chữ thường</td><td class="hl">Xanh #1268B3, đậm vừa; rê chuột thì gạch chân</td></tr>
+  <tr><td>Dấu phân cách</td><td>“&gt;” cùng màu chữ</td><td class="hl">Mũi tên › xám nhạt #9AA5B8</td></tr>
+  <tr><td>Vị trí hiện tại (tên bài)</td><td class="bad">#2E3A59, gần như cùng màu mục trước</td><td class="hl">#333 đậm, không phải link — người đọc biết đang ở đây</td></tr>
+  <tr><td>Vùng bấm trên mobile</td><td class="bad">Cao 10px</td><td class="hl">Khoảng 40px (tăng đệm trên dưới, dải nền giữ nguyên)</td></tr>
+  <tr><td>Tên bài dài trên mobile</td><td>Xuống 2–3 dòng</td><td class="hl">1 dòng, phần dư thành “…”; tên đầy đủ vẫn có trong trang và trong dữ liệu breadcrumb gửi Google</td></tr>
+  <tr><td>Giữ nguyên</td><td colspan="2">Nền dải #E7ECF2, chữ in hoa, thứ tự mục</td></tr>
+ </table></div>
+
+ <h3>Giữ nguyên theo phản hồi</h3>
+ <div class="keep"><span>Font Inter</span><span>Căn đều hai bên</span><span>“Tư vấn chuyên môn” + “Tác giả” tách riêng</span><span>“Cập nhật lần cuối” ở cuối bài</span><span>Mục lục</span><span>Nút “Thêm IVF Tâm Anh trên Google” cuối bài (đang test)</span><span>Cột 3 nút nổi trên desktop</span></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const frame=$('#frame');
+function seg(id,fn){$$('#'+id+' button').forEach(b=>b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.toggle('on',x===b));fn(b.dataset.v)})}
+seg('segState',v=>{document.body.classList.toggle('old',v==='old');document.body.classList.toggle('new',v==='new');closeFab()});
+seg('segDev',v=>{frame.classList.toggle('m',v==='m');closeFab()});
+seg('segMk',v=>document.body.classList.toggle('nomk',v==='0'));
+function applyPhone(){const w=document.documentElement.clientWidth||window.innerWidth;if(w>0&&w<600){document.body.classList.add('phone');frame.classList.add('m')}else if(document.body.classList.contains('phone')){document.body.classList.remove('phone');frame.classList.toggle('m',document.querySelector('#segDev .on').dataset.v==='m')}}
+applyPhone();window.addEventListener('resize',applyPhone);window.addEventListener('load',applyPhone);
+// FAB
+const fab=$('#fab'),dim=$('#dim');
+function closeFab(){fab.classList.remove('open');dim.classList.remove('on')}
+fab.querySelector('.fab').onclick=()=>{const o=fab.classList.toggle('open');dim.classList.toggle('on',o)};
+dim.onclick=closeFab;
+$$('.fab-item').forEach(a=>a.addEventListener('click',closeFab));
+$('#scroller').addEventListener('scroll',closeFab,{passive:true});
+window.addEventListener('scroll',()=>{if(document.body.classList.contains('phone'))closeFab()},{passive:true});
+// tabs
+$$('.hs-tabs button').forEach(b=>b.onclick=()=>{$$('.hs-tabs button').forEach(x=>x.classList.toggle('on',x===b));$$('.hs-col').forEach(c=>c.classList.toggle('on',c.dataset.c===b.dataset.t))});
+// toast
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2000)}
+$$('[data-copy]').forEach(b=>b.onclick=()=>{try{navigator.clipboard.writeText('https://ivfta.com/da-nang-buong-trung-co-thai-duoc-khong/')}catch(e){}toast('Đã sao chép liên kết')});
+$$('[data-zalo]').forEach(b=>b.onclick=()=>toast('Demo: mở chia sẻ Zalo'));
+</script>
+</body>
+</html>
